@@ -28,7 +28,7 @@ var greenTomato = require('./green-tomato.js');
     forceCache: false,
     proxyHost: 'http://example.com',
     searchIgnore: 'path/to/ignore/file',
-    quite: true,
+    quiet: true,
     port: 5000,
     mongoSchema: 'default'
     regexp: null,
@@ -56,7 +56,7 @@ var greenTomato = require('./green-tomato.js');
     }
     ```
 
-* *quite (Boolean):* Used to output or not into the console.
+* *quiet (Boolean):* Used to output or not into the console.
 
 * *port (Number):* Set the :port number to use for the reverse proxy server at localhost, by default it will use :5000
 
@@ -75,7 +75,7 @@ usefull to test timeouts.
   git clone https://github.com/aemonge/green-tomato.git
   cd green-tomato
   npm install && npm install commander
-  tocuh index.js
+  touch index.js
 ```
 
 Edit the file **index.js**, and include:
