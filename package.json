@@ -1,0 +1,40 @@
+{
+  "name": "green-tomato",
+  "version": "0.1.2",
+  "description": "A reverse caching proxy that stores the server responses in mongoDB, to save developers ss\\'s whenever server fails",
+  "main": "green-tomato.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aemonge/green-tomato.git"
+  },
+  "keywords": [
+    "reverse",
+    "proxy",
+    "proxy",
+    "cache",
+    "api",
+    "api",
+    "test",
+    "javascript",
+    "hoxy",
+    "node",
+    "nodejs",
+    "backup"
+  ],
+  "dependencies": {
+    "hoxy": "*",
+    "lodash": "^4.15.0",
+    "mongoose": "^4.5.9",
+    "prettyjson": "*",
+    "q": "^2.0.3"
+  },
+  "author": "aemonge",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/aemonge/green-tomato/issues"
+  },
+  "homepage": "https://github.com/aemonge/green-tomato#readme"
+}
