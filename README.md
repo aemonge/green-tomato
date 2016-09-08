@@ -6,8 +6,8 @@ Called green tomato due to the inmensa JavaScript salad over the web, such as cu
 
 ## Dependencies
 
-* (mongo|https://www.mongodb.com/)
-* (node|https://nodejs.org/en/)
+* https://www.mongodb.com/
+* https://nodejs.org/en/
 
 ## Install
 
@@ -24,7 +24,7 @@ Use it with a
 ```javascript
 var greenTomato = require('./green-tomato.js');
 
-  greenTomato.greenTomato({
+  greenTomato.serve({
     forceCache: false,
     proxyHost: 'http://example.com',
     searchIgnore: 'path/to/ignore/file',
@@ -32,6 +32,7 @@ var greenTomato = require('./green-tomato.js');
     port: 5000,
     mongoSchema: 'default'
     regexp: null,
+    filter: './command'
   });
 ```
 
@@ -73,7 +74,7 @@ usefull to test timeouts.
   ```javascript
   var greenTomato = require('./green-tomato.js');
 
-    greenTomato.greenTomato({
+    greenTomato.serve({
       forceCache: false,
       proxyHost: 'http://example.com',
       searchIgnore: 'path/to/ignore/file',
@@ -128,6 +129,6 @@ Edit the file **index.js**, and include:
 ```
 
 ```bash
-  node index.js
-  node index.js -f
+  $ node index.js
+  $ node index.js -f
 ```

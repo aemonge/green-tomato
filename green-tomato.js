@@ -1,4 +1,5 @@
 'use strict';
+/* eslint-env es6 */
 /* eslint-disable no-unused-vars */
 
 // jscs:disable disallowMultipleVarDecl
