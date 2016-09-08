@@ -69,6 +69,36 @@ usefull to test timeouts.
   * regexp.search (RegExp). The regular expresion to be passed to ULR.replace(*regexp.serach*, regexp.replace).
   * regexp.replace (String). The susbtitution string to be passed to ULR.replace(regexp.serach, *regexp.replace*).
 
+* *filter (bin):* [only on forceCache mode] A command that takes as an argument the response from the server, and if returns a successful exit code(0) it will store the response on the cache database. Example:
+  ```javascript
+  var greenTomato = require('./green-tomato.js');
+
+    greenTomato.greenTomato({
+      forceCache: false,
+      proxyHost: 'http://example.com',
+      searchIgnore: 'path/to/ignore/file',
+      quiet: true,
+      port: 5000,
+      mongoSchema: 'default'
+      regexp: null,
+      filter: './userIdFilter.js'
+    });
+  ```
+
+  **userIdFilter.js**
+    ```javascript
+    #!/usr/bin/env node
+
+    var response = JSON.parse(process.argv[2]); // Parse the response as JSON with node ;)
+
+    if (response.userId  === 5) {
+      process.exit(0); // This will be included in the cache databases
+    } else {
+      process.exit(1); // This returns error, so green-tomato know that for the current request skip it from storing it.
+    }
+    ```
+ 
+
 ## Simple recipe *commander*
 
 ```bash
