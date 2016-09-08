@@ -2,18 +2,17 @@
 /* eslint-env es6 */
 /* eslint-disable no-unused-vars */
 
-// jscs:disable disallowMultipleVarDecl
-var Q = require('q');
-var Hoxy = require('hoxy');
-var Mongoose = require('mongoose');
+const Q = require('q');
+const Hoxy = require('hoxy');
+const Mongoose = require('mongoose');
 Mongoose.Promise = require('q').Promise;
+const Prettyjson = require('prettyjson');
+const _ = require('lodash');
+const __ = require('./lodash-like.js');
+const Child_process = require('child_process');
 var mongoDB;
-var Prettyjson = require('prettyjson');
-var _ = require('lodash');
-var __ = require('./lodash-like.js');
 
 exports.serve = function(configParams) {
-  // jshint validthis:true
   var servicesShemaModel =
     {
       url: String,
@@ -58,7 +57,11 @@ exports.serve = function(configParams) {
   }
 
   function responseInterceptor(request, response) {
-    createRequestEntry(request, response);
+    if (configParams.filter &&
+    Child_process.spawnSync(configParams.filter, [JSON.stringify(response.json)]).status === 0) {
+      createRequestEntry(request, response);
+    }
+
     if (!configParams.quiet) {
       requestPrintLog(request);
     }
