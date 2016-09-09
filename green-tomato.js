@@ -57,7 +57,7 @@ exports.serve = function(configParams) {
   }
 
   function responseInterceptor(request, response) {
-    if (configParams.filter &&
+    if (configParams.filter ||
     Child_process.spawnSync(configParams.filter, [JSON.stringify(response.json)]).status === 0) {
       createRequestEntry(request, response);
     }
@@ -115,7 +115,7 @@ exports.serve = function(configParams) {
   function requestInterceptor(request, response) {
     var searchNeedle;
 
-    if (configParams.regexp && configParams.substitution) {
+    if (configParams.regex.search && configParams.regex.replace) {
       request.url = request.url.replace(configParams.regex.search, configParams.regex.replace);
     }
 
@@ -142,7 +142,7 @@ exports.serve = function(configParams) {
         method: method
       }, requestInterceptor);
     } else {
-      if (configParams.regexp) {
+      if (configParams.regex.search && configParams.regex.replace) {
         proxy.intercept({
           phase: 'request',
           method: method
