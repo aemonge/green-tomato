@@ -32,7 +32,7 @@ exports.serve = function(configParams) {
   }
 
   function respondEntry(response, entry) {
-    var responseData = entry.responseData || entry.successData; // <- legacy support.
+    var responseData = entry.responseData;
     response.statusCode = entry.responseStatusCode || 200;
     response.string = JSON.stringify(responseData);
   }
@@ -57,7 +57,7 @@ exports.serve = function(configParams) {
   }
 
   function responseInterceptor(request, response) {
-    if (configParams.filter ||
+    if (!configParams.filter ||
     Child_process.spawnSync(configParams.filter, [JSON.stringify(response.json)]).status === 0) {
       createRequestEntry(request, response);
     }
@@ -75,7 +75,7 @@ exports.serve = function(configParams) {
   }
 
   function requestPrintLog(request) {
-    console.info('============ Request from greenTomato -> server ===============');
+    console.info('========= Request from green-tomato -> server =============');
     console.info(Prettyjson.render({requestTimeStamp: String(Date.now())}));
     console.info();
     console.info(Prettyjson.render(request));
@@ -115,7 +115,7 @@ exports.serve = function(configParams) {
   function requestInterceptor(request, response) {
     var searchNeedle;
 
-    if (configParams.regex.search && configParams.regex.replace) {
+    if (configParams.regexp && configParams.substitution) {
       request.url = request.url.replace(configParams.regex.search, configParams.regex.replace);
     }
 
@@ -142,14 +142,15 @@ exports.serve = function(configParams) {
         method: method
       }, requestInterceptor);
     } else {
-      if (configParams.regex.search && configParams.regex.replace) {
-        proxy.intercept({
-          phase: 'request',
-          method: method
-        }, function(request) {
+      proxy.intercept({
+        phase: 'request',
+        as: 'json',
+        method: method
+      }, function(request) {
+        if (configParams.regexp.search && configParams.regexp.replace) {
           request.url = request.url.replace(configParams.regexp.search, configParams.regexp.replace);
-        });
-      }
+        }
+      }.bind(this));
 
       proxy.intercept({
         phase: 'response',
@@ -160,7 +161,7 @@ exports.serve = function(configParams) {
   }
 
   function initDB() {
-    Mongoose.connect('mongodb://localhost/greenTomato', {
+    Mongoose.connect('mongodb://localhost/green-tomato', {
       server: {
         auto_reconnect: true,
         socketOptions : {
