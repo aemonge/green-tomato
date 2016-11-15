@@ -2,9 +2,9 @@
 /* eslint-env es6 */
 /* eslint-disable no-unused-vars */
 
-const Q = require('q');
-const Hoxy = require('hoxy');
-const Mongoose = require('mongoose');
+var Q = require('q');
+var Hoxy = require('hoxy');
+var Mongoose = require('mongoose');
 Mongoose.Promise = require('q').Promise;
 const Prettyjson = require('prettyjson');
 const _ = require('lodash');
@@ -12,6 +12,7 @@ const __ = require('./lodash-like.js');
 const Child_process = require('child_process');
 var mongoDB;
 
+exports.version = require('./package.json').version;
 exports.serve = function(configParams) {
   var servicesShemaModel =
     {
@@ -139,6 +140,7 @@ exports.serve = function(configParams) {
     if (configParams.forceCache) {
       proxy.intercept({
         phase: 'request',
+        as: 'json',
         method: method
       }, requestInterceptor);
     } else {
