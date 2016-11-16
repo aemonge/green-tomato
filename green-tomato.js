@@ -94,8 +94,8 @@ exports.serve = function(configParams) {
       searchNeedle.headers = parsedHeaders;
     }
 
-    if (request.json) {
-      searchNeedle.body = __.sortObjectDeep(request.json);
+    if (request.string) {
+      searchNeedle.body = __.sortObjectDeep(JSON.parse(request.string));
     }
 
     if (configParams.searchIgnore) {
@@ -140,7 +140,7 @@ exports.serve = function(configParams) {
     if (configParams.forceCache) {
       proxy.intercept({
         phase: 'request',
-        as: 'json',
+        as: 'string',
         method: method
       }, requestInterceptor);
     } else {
