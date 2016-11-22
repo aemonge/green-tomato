@@ -57,6 +57,21 @@ var greenTomato = require('./green-tomato.js');
     }
     ```
 
+    _* you can also set to "optional" instead of "ignore" to peform two searches, one with the property and another
+    without it. So if by searching with the optional property (ex. :type) no result are found, green-tomato will try
+    another search withouth the optional property before returing a server error (418).
+    search_
+
+    **ignoreFile.json**
+    ```json
+    {
+      "body": {
+        "id": "ignore",
+        "type": "optional"
+      }
+    }
+    ```
+
 * *quiet (Boolean):* Used to output or not into the console.
 
 * *port (Number):* Set the :port number to use for the reverse proxy server at localhost, by default it will use :5000
