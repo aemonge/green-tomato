@@ -58,9 +58,8 @@ var greenTomato = require('./green-tomato.js');
     ```
 
     _* you can also set to "optional" instead of "ignore" to peform two searches, one with the property and another
-    without it. So if by searching with the optional property (ex. :type) no result are found, green-tomato will try
-    another search withouth the optional property before returing a server error (418).
-    search_
+    without it. So if by searching with the optional property (ex. :type) no results are found, green-tomato will try
+    another search without the optional property before returnig a server error (418)._
 
     **ignoreFile.json**
     ```json
@@ -72,14 +71,14 @@ var greenTomato = require('./green-tomato.js');
     }
     ```
 
-* *quiet (Boolean):* Used to output or not into the console.
+* *quiet (Boolean):* Used to turn off or on console output log.
 
 * *port (Number):* Set the :port number to use for the reverse proxy server at localhost, by default it will use :5000
 
 * *delay (Milliseconds):* [only on forceCache mode] Set time in milliseconds to delay the answer from the cache mode,
 usefull to test timeouts.
 
-* *mongoSchema (String):* The collection to save the cache, used to save diferente escenarios. By default [default]
+* *mongoSchema (String):* The collection to save the cache, used to save different scenarios. By default [default]
 
 * *regexp (Object):* [only on NOT forceCache mode] A regexp (javascript) to search and replace in the URL.
   * regexp.search (RegExp). The regular expresion to be passed to ULR.replace(*regexp.serach*, regexp.replace).
