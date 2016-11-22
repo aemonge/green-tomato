@@ -68,8 +68,12 @@ exports.serve = function(configParams) {
     }
   }
 
-  function printSearchNeedle(searchNeedle) {
-    console.info('===================== Serach Needle =======================');
+  function printSearchNeedle(searchNeedle, useOptional) {
+    if (useOptional) {
+      console.info('============ Search Needle (optional excluded) ============');
+    } else {
+      console.info('===================== Serach Needle =======================');
+    }
     console.info(Prettyjson.render({searchedTimeStamp: String(Date.now())}));
     console.info();
     console.info(Prettyjson.render(__.sortObjectDeep(searchNeedle.source, true)));
@@ -82,13 +86,17 @@ exports.serve = function(configParams) {
     console.info(Prettyjson.render(request));
   }
 
-  function getSearchNeedle(request) {
+  function getSearchNeedle(request, useOptional) {
     var searchNeedle =
       {
         url: _.clone(request.url),
         method: _.clone(request.method)
       },
       parsedHeaders = __.sortObjectDeep(formatHeaders(request.headers));
+
+    if (configParams.regexp && configParams.substitution) {
+      request.url = request.url.replace(configParams.regex.search, configParams.regex.replace);
+    }
 
     if (!_.isEmpty(parsedHeaders)) {
       searchNeedle.headers = parsedHeaders;
@@ -100,6 +108,10 @@ exports.serve = function(configParams) {
 
     if (configParams.searchIgnore) {
       __.unassign(searchNeedle, configParams.searchIgnore);
+
+      if (useOptional) {
+        __.unassign(searchNeedle, configParams.searchOptional);
+      }
     }
 
     return {
@@ -113,25 +125,29 @@ exports.serve = function(configParams) {
     response.string = 'I\'m a teapot';
   }
 
-  function requestInterceptor(request, response) {
-    var searchNeedle;
-
-    if (configParams.regexp && configParams.substitution) {
-      request.url = request.url.replace(configParams.regex.search, configParams.regex.replace);
-    }
-
-    searchNeedle = getSearchNeedle(request);
+  function searchForRequest(resolve, reject, request, response, useOptional) {
+    var searchNeedle = getSearchNeedle(request, useOptional);
     if (!configParams.quiet) {
-      printSearchNeedle(searchNeedle);
+      printSearchNeedle(searchNeedle, useOptional);
     }
 
-    return ServicesSchema.find(searchNeedle.query)
-      .sort({timeStamp: -1})
-      .findOne()
-      .exec()
-      .then(respondEntry.bind(this, response))
-      .catch(respondError.bind(this, response))
-    ;
+    ServicesSchema.find(searchNeedle.query)
+    .sort({timeStamp: -1}).findOne().exec()
+    .then((entry) => {
+      respondEntry(response, entry), resolve(200);
+    }).catch(() => {
+      if (useOptional) {
+        respondError(response), reject(new Error(418));
+      } else {
+        searchForRequest(resolve, reject, request, response, true);
+      }
+    })
+  }
+
+  function requestInterceptor(request, response) {
+    return Q.Promise((resolve, reject) => {
+      searchForRequest(resolve, reject, request, response);
+    });
   }
 
   function attachInterceptors() {
@@ -179,11 +195,26 @@ exports.serve = function(configParams) {
     mongoDB.on('error', console.error.bind(console, 'Error:'));
   }
 
+  function parseOptionalIgnoredProps(configParams) {
+    configParams.searchOptional = _.cloneDeep(configParams.searchIgnore);
+    __.keysDeep(configParams.searchOptional).forEach(function(prop) {
+      if (_.get(configParams.searchIgnore, prop) !== 'optional') {
+        _.unset(configParams.searchOptional, prop);
+      } else {
+        _.unset(configParams.searchIgnore, prop);
+      }
+    });
+  }
+
   function initialize() {
     initDB();
     proxy = Hoxy.createServer({
       reverse: configParams.proxyHost
     }).listen(configParams.port);
+
+    if (configParams.searchIgnore) {
+      parseOptionalIgnoredProps(configParams);
+    }
 
     attachInterceptors();
   }
