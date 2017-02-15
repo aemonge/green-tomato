@@ -61,9 +61,11 @@ exports.serve = function(configParams) {
     if (!configParams.filter ||
     Child_process.spawnSync(configParams.filter, [JSON.stringify(response.json)]).status === 0) {
       createRequestEntry(request, response);
+    } if ((configParams.logLevel === 'error') && (!configParams.filter || response.statusCode !== 200)) {
+      requestPrintLog(request);
     }
 
-    if (!configParams.quiet) {
+    if (configParams.logLevel === 'verbose') {
       requestPrintLog(request);
     }
   }
@@ -127,7 +129,8 @@ exports.serve = function(configParams) {
 
   function searchForRequest(resolve, reject, request, response, useOptional) {
     var searchNeedle = getSearchNeedle(request, useOptional);
-    if (!configParams.quiet) {
+
+    if (configParams.logLevel === 'verbose') {
       printSearchNeedle(searchNeedle, useOptional);
     }
 
@@ -137,6 +140,9 @@ exports.serve = function(configParams) {
       respondEntry(response, entry), resolve(200);
     }).catch(() => {
       if (useOptional) {
+        if (configParams.logLevel === 'error') {
+          printSearchNeedle(searchNeedle, useOptional);
+        }
         respondError(response), reject(new Error(418));
       } else {
         searchForRequest(resolve, reject, request, response, true);
