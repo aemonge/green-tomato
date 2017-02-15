@@ -62,30 +62,34 @@ exports.serve = function(configParams) {
     Child_process.spawnSync(configParams.filter, [JSON.stringify(response.json)]).status === 0) {
       createRequestEntry(request, response);
     } if ((configParams.logLevel === 'error') && (!configParams.filter || response.statusCode !== 200)) {
-      requestPrintLog(request);
+      requestPrintLog(request, true);
     }
 
     if (configParams.logLevel === 'verbose') {
-      requestPrintLog(request);
+      requestPrintLog(request, true);
     }
   }
 
   function printSearchNeedle(searchNeedle, useOptional) {
     if (useOptional) {
-      console.info('============ Search Needle (optional excluded) ============');
+      console.info('(', String(Date.now()), ' uts) ', '============ Search Needle (optional excluded) ============');
     } else {
-      console.info('===================== Serach Needle =======================');
+      console.info('(', String(Date.now()), ' uts) ', '===================== Serach Needle =======================');
     }
-    console.info(Prettyjson.render({searchedTimeStamp: String(Date.now())}));
+    console.info(Prettyjson.render(__.sortObjectDeep(searchNeedle.source, true), {
+      format: 'path'
+    }));
     console.info();
-    console.info(Prettyjson.render(__.sortObjectDeep(searchNeedle.source, true)));
   }
 
-  function requestPrintLog(request) {
-    console.info('========= Request from green-tomato -> server =============');
-    console.info(Prettyjson.render({requestTimeStamp: String(Date.now())}));
-    console.info();
+  function requestPrintLog(request, isDirectionToServer) {
+    if (isDirectionToServer)  {
+      console.info('(', String(Date.now()), ' uts) ========= Request from green-tomato -> server =============');
+    } else {
+      console.info('(', String(Date.now()), ' uts) ========= Request from client -> green-tomato =============');
+    }
     console.info(Prettyjson.render(request));
+    console.info();
   }
 
   function getSearchNeedle(request, useOptional) {
@@ -173,6 +177,9 @@ exports.serve = function(configParams) {
       }, function(request) {
         if (configParams.regexp.search && configParams.regexp.replace) {
           request.url = request.url.replace(configParams.regexp.search, configParams.regexp.replace);
+        }
+        if (configParams.logLevel === 'verbose') {
+          requestPrintLog(request, false);
         }
       }.bind(this));
 
