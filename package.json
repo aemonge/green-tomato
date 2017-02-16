@@ -1,6 +1,6 @@
 {
   "name": "green-tomato",
-  "version": "0.1.7",
+  "version": "0.2.0",
   "description": "A reverse caching proxy that stores the server responses in mongoDB, to save developers ss\\'s whenever server fails",
   "main": "green-tomato.js",
   "scripts": {
