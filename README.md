@@ -28,7 +28,7 @@ var greenTomato = require('./green-tomato.js');
     forceCache: false,
     proxyHost: 'http://example.com',
     searchIgnore: 'path/to/ignore/file',
-    quiet: true,
+    logLevel: 'quiet'
     port: 5000,
     mongoSchema: 'default'
     regexp: null,
@@ -71,7 +71,10 @@ var greenTomato = require('./green-tomato.js');
     }
     ```
 
-* *quiet (Boolean):* Used to turn off or on console output log.
+* *logLevel (String):* Used to determine the amount of information to show in the console. From nothign ("*quiet*" or
+  *null*) to only the errors in requests ("*error*") which can be the error from the server, those marked as error from
+  the error filter or any search that didn't found any result. And finally the log lever can be
+  ("verbose") logging all request and searches.
 
 * *port (Number):* Set the :port number to use for the reverse proxy server at localhost, by default it will use :5000
 
@@ -112,7 +115,7 @@ usefull to test timeouts.
       process.exit(1); // This returns error, so green-tomato know that for the current request skip it from storing it.
     }
     ```
- 
+
 
 ## Simple recipe *commander*
 
@@ -136,7 +139,7 @@ Edit the file **index.js**, and include:
   greenTomato.serve({
     forceCache: Program.forceCache,
     proxyHost: 'http://example.com',
-    quiet: false,
+    logLevel: 'error',
     port: '5000',
     mongoSchema: 'default',
   });
