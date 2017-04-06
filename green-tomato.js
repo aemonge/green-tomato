@@ -58,10 +58,19 @@ exports.serve = function(configParams) {
   }
 
   function responseInterceptor(request, response) {
-    if (!configParams.filter ||
-    Child_process.spawnSync(configParams.filter, [JSON.stringify(response.json)]).status === 0) {
+    var filterStatus = (!configParams.filter ||
+      Child_process.spawnSync(configParams.filter, [JSON.stringify(response.json)])
+    );
+
+    if (filterStatus.status === null) {
+      console.error('Problem with the response filter:');
+      console.error(filterStatus.error);
+      filterStatus.status = 0;
+    }
+
+    if (!configParams.filter || filterStatus.status === 0) {
       createRequestEntry(request, response);
-    } if ((configParams.logLevel === 'error') && (!configParams.filter || response.statusCode !== 200)) {
+    } if ((configParams.logLevel === 'verbose') && (!configParams.filter || response.statusCode !== 200)) {
       requestPrintLog(request, true);
     }
 
