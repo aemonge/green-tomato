@@ -201,14 +201,7 @@ exports.serve = function(configParams) {
   }
 
   function initDB() {
-    Mongoose.connect('mongodb://localhost/green-tomato', {
-      server: {
-        auto_reconnect: true,
-        socketOptions : {
-          keepAlive: 1
-        }
-      }
-    });
+    Mongoose.connect('mongodb://localhost/green-tomato',  {useNewUrlParser: true, useUnifiedTopology: true });
 
     mongoDB = Mongoose.connection;
     mongoDB.once('open', function () {
