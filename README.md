@@ -16,12 +16,10 @@ format.
 ```
 
 ## Features
-* Server and local. If this software can be hosted as a server to act as a sandbox.
-* Records. The capacity to record the mocks **automatically** from a real request to the server.
-* Custom Headers. The ability to use and respond custom headers.
-* HTTP Errors. The ability to mock custom HTTP errors.
-* Body. The ability responde differently based on request body, not only by URL path.
-* Session. It supports different sessions by changing the scheme name
+* Run it as a server and/or locally.
+* Record the mocks automatically from a real request to the server.
+* Respond custom headers and HTTP errors.
+* Supports different sessions by changing the scheme name.
 
 ## Dependencies
 
