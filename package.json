@@ -1,6 +1,6 @@
 {
   "name": "green-tomato",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "A sandbox and mock server that automatically records mocks by a reverse proxy. It can be used as a API cache",
   "main": "green-tomato.js",
   "scripts": {

@@ -24,6 +24,7 @@ class GreenTomato {
     var responseData = entry.responseData;
     response.statusCode = entry.responseStatusCode || 200;
     response.string = JSON.stringify(responseData);
+    response.headers['content-type'] = `${(typeof responseData === 'object' ? 'application/json' : 'text/html;')} ; charset=UTF-8`;
   }
 
   createRequestEntry(request, response) {
