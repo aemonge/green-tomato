@@ -26,11 +26,12 @@ var greenTomato = require('./green-tomato.js');
 
   greenTomato.serve({
     forceCache: false,
-    proxyHost: 'http://example.com',
+    proxyHost: 'https://httpbin.org',
     searchIgnore: 'path/to/ignore/file',
-    logLevel: 'quiet'
+    logLevel: 'quiet',
     port: 5000,
-    mongoSchema: 'default'
+    mongoSchema: 'default',
+    delay: 0,
     regexp: null,
     filter: './command'
   });
@@ -97,7 +98,7 @@ usefull to test timeouts.
       searchIgnore: 'path/to/ignore/file',
       quiet: true,
       port: 5000,
-      mongoSchema: 'default'
+      mongoSchema: 'default',
       regexp: null,
       filter: './userIdFilter.js'
     });
@@ -129,16 +130,16 @@ usefull to test timeouts.
 Edit the file **index.js**, and include:
 
 ```javascript
-  var Program = require('commander');
-  var greenTomato = require('./green-tomato.js');
+  const Program = require('commander');
+  const { GreenTomato } = require('green-tomato');
 
   Program
     .option('-f, --force-cache', '')
     .parse(process.argv);
 
-  greenTomato.serve({
+  let greenTomato = new GreenTomato({
     forceCache: Program.forceCache,
-    proxyHost: 'http://example.com',
+    proxyHost: 'https://httpbin.org',
     logLevel: 'error',
     port: '5000',
     mongoSchema: 'default',
