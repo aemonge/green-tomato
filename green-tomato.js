@@ -61,6 +61,8 @@ class GreenTomato {
     if (this.config.logLevel === 'verbose') {
       this.requestPrintLog(request, true);
     }
+
+    response.headers['content-type'] = `${(typeof response.json === 'object' ? 'application/json' : 'text/html;')} ; charset=UTF-8`;
   }
 
   printSearchNeedle(searchNeedle, useOptional) {
@@ -132,19 +134,19 @@ class GreenTomato {
     }
 
     this.ServicesSchema.find(searchNeedle.query)
-    .sort({timeStamp: -1}).findOne().exec()
-    .then((entry) => {
-      this.respondEntry(response, entry), resolve(200);
-    }).catch(() => {
-      if (useOptional) {
-        if (this.config.logLevel === 'error') {
-          this.printSearchNeedle(searchNeedle, useOptional);
+      .sort({timeStamp: -1}).findOne().exec()
+      .then((entry) => {
+        this.respondEntry(response, entry), resolve(200);
+      }).catch(() => {
+        if (useOptional) {
+          if (this.config.logLevel === 'error') {
+            this.printSearchNeedle(searchNeedle, useOptional);
+          }
+          this.respondError(response), reject(new Error(418));
+        } else {
+          this.searchForRequest(resolve, reject, request, response, true);
         }
-        this.respondError(response), reject(new Error(418));
-      } else {
-        this.searchForRequest(resolve, reject, request, response, true);
-      }
-    })
+      });
   }
 
   requestInterceptor(request, response) {
@@ -189,7 +191,7 @@ class GreenTomato {
 
     this.mongoDB = Mongoose.connection;
     this.mongoDB.once('open', () => {
-      this.ServicesSchema = Mongoose.model(this.config.mongoSchema, Mongoose.Schema(this.servicesShemaModel));
+      this.ServicesSchema = Mongoose.model(this.config.mongoSchema, this.servicesShemaModel);
     });
     this.mongoDB.on('error', console.error.bind(console, 'Error:'));
   }
@@ -206,6 +208,7 @@ class GreenTomato {
   }
 
   start() {
+    this.initDB();
     this.proxy = Hoxy.createServer({
       reverse: this.config.proxyHost
     }).listen(this.config.port);
@@ -221,11 +224,14 @@ class GreenTomato {
   stop() {
     this.proxy.close();
     this.config.running = false;
-    // this.mongoDB.close(); @TODO: This is giving me problems. I should fix it eventually
+    this.mongoDB.close();
   }
 
   restart(newConfig) {
-    this.stop();
+    if (this.config.running) {
+      this.stop();
+    }
+    this.setConfig(newConfig);
     this.start();
   }
 
@@ -237,7 +243,7 @@ class GreenTomato {
     this.setConfig(arguments[0]);
     this.ServicesSchema;
     this.proxy;
-    this.servicesShemaModel = {
+    this.servicesShemaModel = Mongoose.Schema({
       url: String,
       method: String,
       headers: Object,
@@ -245,9 +251,8 @@ class GreenTomato {
       responseData: Object,
       responseStatusCode: Number,
       timeStamp: Date
-    };
+    });
     this.config.running = false;
-    this.initDB();
   }
 }
 
