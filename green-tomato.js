@@ -23,9 +23,10 @@ class GreenTomato {
 
   respondEntry(response, entry) {
     var responseData = entry.responseData;
+    const type = typeof responseData;
     response.statusCode = entry.responseStatusCode || 200;
     response.string = JSON.stringify(responseData);
-    response.headers['content-type'] = `${(typeof responseData === 'object' ? 'application/json' : 'text/html;')} ; charset=UTF-8`;
+    response.headers['content-type'] = `${(type === 'object' ? 'application/json' : 'text/html;')} ; charset=UTF-8`;
   }
 
   createRequestEntry(request, response) {
@@ -66,8 +67,8 @@ class GreenTomato {
     response.headers['content-type'] = `${(typeof response.json === 'object' ? 'application/json' : 'text/html;')} ; charset=UTF-8`;
   }
 
-  printSearchNeedle(searchNeedle, useOptional) {
-    if (useOptional) {
+  printSearchNeedle(searchNeedle) {
+    if (this.config.useOptional) {
       console.info('(', String(Date.now()), ' uts) ', '============ Search Needle (optional excluded) ============');
     } else {
       console.info('(', String(Date.now()), ' uts) ', '===================== Serach Needle =======================');
@@ -88,7 +89,7 @@ class GreenTomato {
     console.info();
   }
 
-  getSearchNeedle(request, useOptional) {
+  getSearchNeedle(request) {
     var searchNeedle =
       {
         url: _.clone(request.url),
@@ -104,17 +105,18 @@ class GreenTomato {
       searchNeedle.headers = parsedHeaders;
     }
 
-    if (request.string) {
-      searchNeedle.body = __.sortObjectDeep(JSON.parse(request.string));
+    if (request.json) {
+      searchNeedle.body = request.json;
     }
 
     if (this.config.searchIgnore) {
       __.unassign(searchNeedle, this.config.searchIgnore);
 
-      if (useOptional) {
+      if (this.config.useOptional) {
         __.unassign(searchNeedle, this.config.searchOptional);
       }
     }
+
 
     return {
       query: __.toPath(searchNeedle),
@@ -127,11 +129,11 @@ class GreenTomato {
     response.string = 'I\'m a teapot';
   }
 
-  searchForRequest(resolve, reject, request, response, useOptional) {
-    var searchNeedle = this.getSearchNeedle(request, useOptional);
+  searchForRequest(resolve, reject, request, response) {
+    var searchNeedle = this.getSearchNeedle(request);
 
     if (this.config.logLevel === 'verbose') {
-      this.printSearchNeedle(searchNeedle, useOptional);
+      this.printSearchNeedle(searchNeedle);
     }
 
     this.ServicesSchema.find(searchNeedle.query)
@@ -139,9 +141,9 @@ class GreenTomato {
       .then((entry) => {
         this.respondEntry(response, entry), resolve(200);
       }).catch(() => {
-        if (useOptional) {
+        if (this.config.useOptional) {
           if (this.config.logLevel === 'error') {
-            this.printSearchNeedle(searchNeedle, useOptional);
+            this.printSearchNeedle(searchNeedle);
           }
           this.respondError(response), reject(new Error(418));
         } else {
@@ -162,7 +164,7 @@ class GreenTomato {
     if (this.config.useRecords) {
       this.proxy.intercept({
         phase: 'request',
-        as: 'string',
+        as: 'json',
         method: method
       }, this.requestInterceptor.bind(this));
     } else {
@@ -238,6 +240,7 @@ class GreenTomato {
 
   setConfig(configParams) {
     this.config = _.assign(this.config, configParams);
+    this.config.useOptional = !!(this.config.searchIgnore);
   }
 
   constructor() {
