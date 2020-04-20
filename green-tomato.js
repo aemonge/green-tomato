@@ -6,6 +6,7 @@ var Q = require('q');
 var Hoxy = require('hoxy');
 var Mongoose = require('mongoose');
 Mongoose.Promise = require('q').Promise;
+Mongoose.pluralize(null);
 const Prettyjson = require('prettyjson');
 const _ = require('lodash');
 const __ = require('./lodash-like.js');
