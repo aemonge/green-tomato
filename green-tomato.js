@@ -1,12 +1,11 @@
 'use strict';
-/* eslint-env es6 */
-/* eslint-disable no-unused-vars */
 
 var Q = require('q');
 var Hoxy = require('hoxy');
+require('tungus');
 var Mongoose = require('mongoose');
 Mongoose.Promise = require('q').Promise;
-Mongoose.pluralize(null);
+// Mongoose.pluralize(null);
 const Prettyjson = require('prettyjson');
 const _ = require('lodash');
 const __ = require('./lodash-like.js');
@@ -190,7 +189,7 @@ class GreenTomato {
   }
 
   initDB() {
-    Mongoose.connect('mongodb://localhost/green-tomato',  {useNewUrlParser: true, useUnifiedTopology: true });
+    Mongoose.connect(this.config.dataBase,  {useNewUrlParser: true, useUnifiedTopology: true });
 
     this.mongoDB = Mongoose.connection;
     this.mongoDB.once('open', () => {
@@ -239,7 +238,10 @@ class GreenTomato {
   }
 
   setConfig(configParams) {
-    this.config = _.assign(this.config, configParams);
+    const defaults = {
+      dataBase: 'tingodb://./temp'
+    };
+    this.config = _.assign(this.config, configParams, defaults);
     this.config.useOptional = !!(this.config.searchIgnore);
   }
 
