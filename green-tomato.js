@@ -240,14 +240,15 @@ class GreenTomato {
   }
 
   setConfig(configParams) {
-    const defaults = {
-      dataBase: 'tingodb://./temp'
-    };
-    this.config = _.assign(this.config, defaults, configParams);
+    this.config = _.assign(this.config, configParams);
     this.config.useOptional = !!(this.config.searchIgnore);
   }
 
   constructor() {
+    this.config = {
+      running: false,
+      dataBase: 'tingodb://./temp'
+    };
     this.setConfig(arguments[0]);
     this.ServicesSchema;
     this.proxy;
@@ -260,7 +261,6 @@ class GreenTomato {
       responseStatusCode: Number,
       timeStamp: Date
     });
-    this.config.running = false;
   }
 }
 
