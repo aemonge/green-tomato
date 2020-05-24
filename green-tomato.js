@@ -5,7 +5,9 @@ var Hoxy = require('hoxy');
 require('tungus');
 var Mongoose = require('mongoose');
 Mongoose.Promise = require('q').Promise;
-// Mongoose.pluralize(null);
+if (Mongoose.pluralize) {
+  Mongoose.pluralize(null);
+}
 const Prettyjson = require('prettyjson');
 const _ = require('lodash');
 const __ = require('./lodash-like.js');
@@ -241,7 +243,7 @@ class GreenTomato {
     const defaults = {
       dataBase: 'tingodb://./temp'
     };
-    this.config = _.assign(this.config, configParams, defaults);
+    this.config = _.assign(this.config, defaults, configParams);
     this.config.useOptional = !!(this.config.searchIgnore);
   }
 
