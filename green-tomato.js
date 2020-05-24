@@ -2,7 +2,7 @@
 
 var Q = require('q');
 var Hoxy = require('hoxy');
-require('tungus');
+// require('tungus'); @NOTE: wait until they support mongoose 5.X
 var Mongoose = require('mongoose');
 Mongoose.Promise = require('q').Promise;
 if (Mongoose.pluralize) {
