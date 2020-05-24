@@ -246,8 +246,7 @@ class GreenTomato {
 
   constructor() {
     this.config = {
-      running: false,
-      dataBase: 'tingodb://./temp'
+      running: false
     };
     this.setConfig(arguments[0]);
     this.ServicesSchema;

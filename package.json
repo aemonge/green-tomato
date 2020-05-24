@@ -1,6 +1,6 @@
 {
   "name": "green-tomato",
-  "version": "0.4.3",
+  "version": "0.4.4",
   "description": "A sandbox and mock server that automatically records mocks by a reverse proxy. It can be used as a API cache",
   "main": "green-tomato.js",
   "scripts": {
@@ -26,10 +26,9 @@
     "backup"
   ],
   "dependencies": {
-    "bson": "git+ssh://git@github.com/aemonge/js-bson.git#0.2.23",
     "hoxy": "*",
     "lodash": "^4.17.15",
-    "mongoose": "3.8.40",
+    "mongoose": "^5.9.6",
     "prettyjson": "aemonge/prettyjson",
     "q": "^2.0.3",
     "tingodb": "^0.6.1",
