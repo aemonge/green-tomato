@@ -246,7 +246,8 @@ class GreenTomato {
 
   constructor() {
     this.config = {
-      running: false
+      running: false,
+      dataBase: 'mongodb://localhost:27017'
     };
     this.setConfig(arguments[0]);
     this.ServicesSchema;
