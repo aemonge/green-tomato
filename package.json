@@ -30,9 +30,7 @@
     "lodash": "^4.17.15",
     "mongoose": "^5.9.6",
     "prettyjson": "aemonge/prettyjson",
-    "q": "^2.0.3",
-    "tingodb": "^0.6.1",
-    "tungus": "0.0.5"
+    "q": "^2.0.3"
   },
   "author": "aemonge",
   "license": "ISC",
